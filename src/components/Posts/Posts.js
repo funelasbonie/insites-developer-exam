@@ -23,14 +23,20 @@ class Posts extends Component {
         this.setState({ selectedPost: post });
     };
 
+    addNewPost = (newPost) => {        
+        this.setState((prevState) => ({
+          posts: [...prevState.posts, newPost],
+        }));
+      };
+
     render() {
         const { posts, selectedPost } = this.state;
-
+        
         return (
-            <div>
-                <PostList posts={posts} setSelectedPost={this.setSelectedPost} />
-                <PostForm />
+            <div>                
+                <PostForm addNewPost={this.addNewPost} />
                 <PostDetails post={selectedPost} />
+                <PostList posts={posts} setSelectedPost={this.setSelectedPost} />
             </div>
         );
     }
