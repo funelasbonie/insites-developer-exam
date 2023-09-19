@@ -1,51 +1,34 @@
 import React, { Component } from 'react';
 import PostList from './PostList';
 import PostForm from './PostForm';
-import PostDetails from './PostDetails';
 
 export default class Posts extends Component {
     constructor() {
         super();
         this.state = {
             posts: [],
-            selectedPost: null,
-            selectedPostToEdit: null,
-            isPostDetailsVisible: false,
+            selectedPostToEdit: null
         };
     }
 
     componentDidMount() {
         fetch('https://jsonplaceholder.typicode.com/posts')
             .then((response) => response.json())
-            .then((data) => this.setState({ posts: data }))
+            .then((data) => {
+                const modifiedData = data.map((item) => ({
+                    ...item,
+                    isToggled: true,
+                }));
+                this.setState({ posts: modifiedData });
+            })
             .catch((error) => console.error('Error fetching data:', error));
     }
-
-
-
-    setSelectedPost = (post) => {
-        this.setState({ selectedPost: post });
-    };
-
-
-
-
-    viewPost = (post) => {
-        this.setState({
-            selectedPost: post,
-            isPostDetailsVisible: !this.state.isPostDetailsVisible,
-        });
-    };
-
-
 
     addNewPost = (newPost) => {
         this.setState((prevState) => ({
             posts: [...prevState.posts, newPost],
         }));
     };
-
-
 
     setSelectedPostToEdit = (post) => {
         this.setState({ selectedPostToEdit: post });
@@ -69,26 +52,30 @@ export default class Posts extends Component {
         this.setState({ selectedPostToEdit: null });
     };
 
-
-
     deletePost = (postToDelete) => {
         const updatedPosts = this.state.posts.filter(
             (post) => post.id !== postToDelete.id
         );
         this.setState({
             posts: updatedPosts,
-            selectedPost: null,
             selectedPostToEdit: null,
-            isPostDetailsVisible: false,
         });
     };
 
-
+    togglePost = (postId) => {
+        this.setState((prevState) => {
+            const updatedPosts = prevState.posts.map((post) => {
+                if (post.id === postId) {
+                    return { ...post, isToggled: !post.isToggled };
+                }
+                return post;
+            });
+            return { posts: updatedPosts, selectedPostToEdit: null };
+        });
+    };
 
     render() {
-        const { posts, selectedPost, selectedPostToEdit, isPostDetailsVisible } = this.state;
-
-        console.log(posts)
+        const { posts, selectedPostToEdit } = this.state;
 
         return (
             <div>
@@ -103,13 +90,11 @@ export default class Posts extends Component {
                         />
                     </div>
                     <div className="w-1/2 p-4">
-                        {isPostDetailsVisible && <PostDetails post={selectedPost} />}
                         <PostList
                             posts={posts}
-                            setSelectedPost={this.setSelectedPost}
+                            togglePosts={this.togglePost}
                             editPost={this.setSelectedPostToEdit}
                             deletePost={this.deletePost}
-                            viewPost={this.viewPost}
                         />
                     </div>
                 </div>

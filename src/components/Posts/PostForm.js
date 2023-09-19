@@ -70,6 +70,7 @@ class PostForm extends Component {
               value={this.state.title}
               onChange={this.handleInputChange}
               className="w-full px-3 py-2 border rounded-lg border-gray-300 focus:outline-none focus:border-blue-500"
+              autoComplete="off"
               required
             />
           </div>
@@ -87,7 +88,7 @@ class PostForm extends Component {
             type="submit"
             className="w-32 bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-300"
           >
-            {this.props.selectedPostToEdit ? 'Update Post' : 'Add Post'}
+            {this.props.selectedPostToEdit ? 'Update' : 'Add'}
           </button>
           {this.props.selectedPostToEdit && (
             <button
