@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-export default class PostForm extends Component {
+class PostForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -9,22 +9,48 @@ export default class PostForm extends Component {
     };
   }
 
+  componentDidUpdate(prevProps) {    
+    if (prevProps.selectedPostToEdit !== this.props.selectedPostToEdit) {
+      const { title, body } = this.props.selectedPostToEdit || { title: '', body: '' };
+      this.setState({
+        title,
+        body,
+      });
+    }
+  }
+
   handleInputChange = (e) => {
     this.setState({
       [e.target.name]: e.target.value,
     });
   };
 
+  handleCancel = () => {
+    this.props.cancelEdit();
+    this.setState({
+      title: '',
+      body: '',
+    });
+  };
+
   handleSubmit = (e) => {
     e.preventDefault();
 
-    const newPost = {
-      id: Date.now(),
-      title: this.state.title,
-      body: this.state.body,
-    };
+    if (this.props.selectedPostToEdit) {
+      this.props.editSelectedPost({
+        ...this.props.selectedPostToEdit,
+        title: this.state.title,
+        body: this.state.body,
+      });
+    } else {
+      const newPost = {
+        id: Date.now(),
+        title: this.state.title,
+        body: this.state.body,
+      };
 
-    this.props.addNewPost(newPost);
+      this.props.addNewPost(newPost);
+    }
 
     this.setState({
       title: '',
@@ -54,9 +80,18 @@ export default class PostForm extends Component {
               onChange={this.handleInputChange}
             />
           </div>
-          <button type="submit">Add Post</button>
+          <button type="submit">
+            {this.props.selectedPostToEdit ? 'Edit Post' : 'Add Post'}
+          </button>
+          {this.props.selectedPostToEdit && (
+            <button type="button" onClick={this.handleCancel}>
+              Cancel
+            </button>
+          )}
         </form>
       </div>
     );
   }
 }
+
+export default PostForm;
