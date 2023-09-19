@@ -6,16 +6,11 @@ export default class PostList extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      
-    }; 
+    this.state = {}; 
   }
 
   render() {
     const { posts } = this.props
-
-    console.log(this.props.posts)
-    console.log(this.state.truncatedPosts)
 
     posts.sort((a, b) => b.id - a.id)
 
