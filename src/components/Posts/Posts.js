@@ -3,7 +3,7 @@ import PostList from './PostList';
 import PostForm from './PostForm';
 import PostDetails from './PostDetails';
 
-class Posts extends Component {
+export default class Posts extends Component {
     constructor() {
         super();
         this.state = {
@@ -60,7 +60,7 @@ class Posts extends Component {
             this.setState((prevState) => {
                 const updatedPosts = [...prevState.posts];
                 updatedPosts[index] = editedPost;
-                return { posts: updatedPosts, selectedPost: null };
+                return { posts: updatedPosts, selectedPostToEdit: null };
             });
         }
     };
@@ -83,31 +83,39 @@ class Posts extends Component {
         });
     };
 
-   
+
 
     render() {
         const { posts, selectedPost, selectedPostToEdit, isPostDetailsVisible } = this.state;
 
+        console.log(posts)
+
         return (
             <div>
-                {isPostDetailsVisible && <PostDetails post={selectedPost} />}
-                <PostForm
-                    addNewPost={this.addNewPost}
-                    // selectedPostToEdit
-                    selectedPostToEdit={selectedPostToEdit}
-                    editSelectedPost={this.editSelectedPost}
-                    cancelEdit={this.cancelEdit}
-                />
-                <PostList
-                    posts={posts}
-                    setSelectedPost={this.setSelectedPost}
-                    editPost={this.setSelectedPostToEdit}
-                    deletePost={this.deletePost}
-                    viewPost={this.viewPost}
-                />
+                <div className="text-4xl font-bold mb-4 ml-4">POSTS</div>
+                <div className="flex">
+                    <div className="w-1/2 p-4">
+                        <PostForm
+                            addNewPost={this.addNewPost}
+                            selectedPostToEdit={selectedPostToEdit}
+                            editSelectedPost={this.editSelectedPost}
+                            cancelEdit={this.cancelEdit}
+                        />
+                    </div>
+                    <div className="w-1/2 p-4">
+                        {isPostDetailsVisible && <PostDetails post={selectedPost} />}
+                        <PostList
+                            posts={posts}
+                            setSelectedPost={this.setSelectedPost}
+                            editPost={this.setSelectedPostToEdit}
+                            deletePost={this.deletePost}
+                            viewPost={this.viewPost}
+                        />
+                    </div>
+                </div>
             </div>
         );
     }
 }
 
-export default Posts;
+
