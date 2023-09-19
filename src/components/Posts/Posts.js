@@ -7,11 +7,13 @@ export default class Posts extends Component {
         super();
         this.state = {
             posts: [],
-            selectedPostToEdit: null
+            selectedPostToEdit: null,
+            isLoading: true
         };
     }
 
     componentDidMount() {
+        this.setState({ isLoading: true });
         fetch('https://jsonplaceholder.typicode.com/posts')
             .then((response) => response.json())
             .then((data) => {
@@ -19,9 +21,15 @@ export default class Posts extends Component {
                     ...item,
                     isToggled: true,
                 }));
-                this.setState({ posts: modifiedData });
+                this.setState({
+                    posts: modifiedData,
+                    isLoading: false
+                });
             })
-            .catch((error) => console.error('Error fetching data:', error));
+            .catch((error) => {
+                console.error('Error fetching data:', error)
+                this.setState({ isLoading: false });
+            });
     }
 
     addNewPost = (newPost) => {
@@ -75,32 +83,36 @@ export default class Posts extends Component {
     };
 
     render() {
-        const { posts, selectedPostToEdit } = this.state;
+        const { posts, selectedPostToEdit, isLoading } = this.state;
 
         return (
             <div>
                 <div className="text-4xl font-bold mb-4 ml-4">POSTS</div>
-                <div className="flex">
-                    <div className="w-1/2 p-4">
-                        <PostForm
-                            addNewPost={this.addNewPost}
-                            selectedPostToEdit={selectedPostToEdit}
-                            editSelectedPost={this.editSelectedPost}
-                            cancelEdit={this.cancelEdit}
-                        />
+                {isLoading ? (
+                    <div className="flex justify-center items-center h-32">
+                        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
                     </div>
-                    <div className="w-1/2 p-4">
-                        <PostList
-                            posts={posts}
-                            togglePosts={this.togglePost}
-                            editPost={this.setSelectedPostToEdit}
-                            deletePost={this.deletePost}
-                        />
+                ) : (
+                    <div className="flex">
+                        <div className="w-1/2 p-4">
+                            <PostForm
+                                addNewPost={this.addNewPost}
+                                selectedPostToEdit={selectedPostToEdit}
+                                editSelectedPost={this.editSelectedPost}
+                                cancelEdit={this.cancelEdit}
+                            />
+                        </div>
+                        <div className="w-1/2 p-4">
+                            <PostList
+                                posts={posts}
+                                togglePosts={this.togglePost}
+                                editPost={this.setSelectedPostToEdit}
+                                deletePost={this.deletePost}
+                            />
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
         );
     }
 }
-
-
