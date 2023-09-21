@@ -20,7 +20,12 @@ export default class Posts extends Component {
                 const modifiedData = data.map((item) => ({
                     ...item,
                     isToggled: true,
+                    pageSlug: item.title.replace(/[\s_]/g, '-').toLowerCase(),
+                    bannerImage: "someImage",
+                    isPublished: true
                 }));
+
+                console.log(modifiedData)
                 this.setState({
                     posts: modifiedData,
                     isLoading: false

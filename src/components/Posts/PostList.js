@@ -6,7 +6,7 @@ export default class PostList extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {}; 
+    this.state = {};
   }
 
   render() {
@@ -21,7 +21,12 @@ export default class PostList extends React.Component {
             <li key={post.id} className="mb-4">
               <div className="bg-white rounded-lg shadow-md p-4">
                 <div className="flex justify-between items-center">
-                  <h3 className="text-xl font-semibold text-gray-800 mr-5">{post.title}</h3>
+                  <div>
+                    <span className={`px-2 py-1 text-sm font-semibold text-white ${post.isPublished ? "bg-blue-500" : "bg-gray-500"} rounded-lg`}>
+                      {post.isPublished ? "Published" : "Unpublished"}
+                    </span>
+                    <h3 className="text-xl font-semibold text-gray-800 mr-5">{post.title}</h3>
+                  </div>
                   <div className="w-16 flex justify-end items-end gap-3">
                     <button
                       onClick={() => this.props.editPost(post)}
