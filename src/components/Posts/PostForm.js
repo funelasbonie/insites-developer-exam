@@ -49,7 +49,7 @@ export default class PostForm extends Component {
         body: this.state.body,
         isToggled: false,
         pageSlug: this.state.title.replace(/[\s_]/g, '-').toLowerCase(),
-        bannerImage: "someImage",
+        bannerImage: "https://source.unsplash.com/user/c_v_r/1900x800",
         isPublished: true
       };
 

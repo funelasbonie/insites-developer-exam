@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import PostList from './PostList';
 import PostForm from './PostForm';
 import PostDetails from './PostDetails';
 import PostPublish from './PostPublish';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
-
 
 export default class Posts extends Component {
     constructor() {
@@ -13,8 +11,6 @@ export default class Posts extends Component {
         this.state = {
             posts: [],
             selectedPostToEdit: null,
-            selectedPostToView: null,
-            selectedPostToPublish: null,
             isLoading: true
         };
     }
@@ -94,20 +90,6 @@ export default class Posts extends Component {
         });
     };
 
-    setSelectedPostToView = (post) => {
-        this.setState({
-            selectedPostToView: post,
-            selectedPostToEdit: null
-        });
-    };
-
-    setSelectedPostToPublish = (post) => {
-        this.setState({
-            selectedPostToPublish: post,
-            selectedPostToEdit: null
-        });
-    };
-
     togglePublish = (post) => {
         const updatedPosts = this.state.posts.map((p) => {
             if (p.id === post.id) {
@@ -118,76 +100,47 @@ export default class Posts extends Component {
 
         this.setState({
             posts: updatedPosts,
-            selectedPostToPublish: null,
-        });
-    };
-
-    clearSelectedPost = () => {
-        this.setState({
-            selectedPostToView: null,
-            selectedPostToPublish: null,
         });
     };
 
     render() {
-        const { posts, selectedPostToEdit, isLoading, selectedPostToView, selectedPostToPublish } = this.state;
+        const { posts, selectedPostToEdit, isLoading } = this.state;
 
-        if (selectedPostToView) {
-            return (
-                <div>
-                    <button onClick={this.clearSelectedPost} className="mb-2 text-m font-semibold text-blue-500">
-                        <FontAwesomeIcon icon={faArrowLeft} className='mr-2' />
-                        Back to Post List
-                    </button>
-                    <PostDetails post={selectedPostToView} />
+        const HomeComponent = <div>
+            {isLoading ? (
+                <div className="flex justify-center items-center h-32">
+                    <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
                 </div>
-            );
-        }
-
-        if (selectedPostToPublish) {
-            return (
-                <div>
-                    <button onClick={this.clearSelectedPost} className="mb-2 text-m font-semibold text-blue-500">
-                        <FontAwesomeIcon icon={faArrowLeft} className='mr-2' />
-                        Back to Post List
-                    </button>
-                    <PostPublish
-                        post={selectedPostToPublish}
-                        togglePublish={this.togglePublish}
-                    />
+            ) : (
+                <div className="flex flex-col lg:flex-row">
+                    <div className="lg:w-1/3 md:w-full p-4">
+                        <PostForm
+                            addNewPost={this.addNewPost}
+                            selectedPostToEdit={selectedPostToEdit}
+                            editSelectedPost={this.editSelectedPost}
+                            cancelEdit={this.cancelEdit}
+                        />
+                    </div>
+                    <div className="lg:w-2/3 md:w-full p-4">
+                        <PostList
+                            posts={posts}
+                            togglePosts={this.togglePost}
+                            editPost={this.setSelectedPostToEdit}
+                            deletePost={this.deletePost}
+                        />
+                    </div>
                 </div>
-            );
-        }
+            )}
+        </div>
 
         return (
-            <div>
-                {isLoading ? (
-                    <div className="flex justify-center items-center h-32">
-                        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
-                    </div>
-                ) : (
-                    <div className="flex flex-col lg:flex-row">
-                        <div className="lg:w-1/3 md:w-full p-4">
-                            <PostForm
-                                addNewPost={this.addNewPost}
-                                selectedPostToEdit={selectedPostToEdit}
-                                editSelectedPost={this.editSelectedPost}
-                                cancelEdit={this.cancelEdit}
-                            />
-                        </div>
-                        <div className="lg:w-2/3 md:w-full p-4">
-                            <PostList
-                                posts={posts}
-                                togglePosts={this.togglePost}
-                                editPost={this.setSelectedPostToEdit}
-                                deletePost={this.deletePost}
-                                viewPost={this.setSelectedPostToView}
-                                togglePublish={this.setSelectedPostToPublish}
-                            />
-                        </div>
-                    </div>
-                )}
-            </div>
+            <Router>
+                <Routes>
+                    <Route path="/" element={HomeComponent} />
+                    <Route path="/view/:slug" element={<PostDetails posts={posts} />} />
+                    <Route path="/publish/:slug" element={<PostPublish posts={posts} togglePublish={this.togglePublish} />} />
+                </Routes>
+            </Router>
         );
     }
 }

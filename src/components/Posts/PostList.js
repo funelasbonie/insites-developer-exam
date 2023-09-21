@@ -1,6 +1,7 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash, faUpload, faDownload } from '@fortawesome/free-solid-svg-icons';
+import { Link } from 'react-router-dom';
 
 export default class PostList extends React.Component {
 
@@ -85,16 +86,14 @@ export default class PostList extends React.Component {
                   {post.isPublished ? "Published" : "Unpublished"}
                 </span>
                 <div className="flex justify-between items-center">
-                  <h3
-                    className={`mt-2 text-xl font-semibold mr-5 ${post.isPublished ? 'text-blue-500 cursor-pointer' : 'text-gray-800 '}`}
-                    onClick={() => post.isPublished ? this.props.viewPost(post) : {}}
-                  >{post.title}</h3>
+                  <h3 className={`mt-2 text-xl font-semibold mr-5 ${post.isPublished ? 'text-blue-500' : 'text-gray-800 '}`}>
+                    {post.isPublished ? <Link to={`/view/${post.pageSlug}`}>{post.title}</Link> : post.title}
+                  </h3>
                   <div className="mt-3 w-16 flex flex-grow justify-end items-end gap-3">
-                    <button
-                      onClick={() => this.props.togglePublish(post)}
-                      className={`text-${post.isPublished ? 'gray' : 'blue'}-500 hover:text-${post.isPublished ? 'grey' : 'blue'}-700`}
-                    >
-                      <FontAwesomeIcon icon={post.isPublished ? faDownload : faUpload} />
+                    <button className={`text-${post.isPublished ? 'gray' : 'blue'}-500 hover:text-${post.isPublished ? 'grey' : 'blue'}-700`}>
+                      <Link to={`/publish/${post.pageSlug}`}>
+                        <FontAwesomeIcon icon={post.isPublished ? faDownload : faUpload} />
+                      </Link>
                     </button>
                     <button
                       onClick={() => this.props.editPost(post)}
