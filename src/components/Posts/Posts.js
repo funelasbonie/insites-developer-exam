@@ -1,6 +1,11 @@
 import React, { Component } from 'react';
 import PostList from './PostList';
 import PostForm from './PostForm';
+import PostDetails from './PostDetails';
+import PostPublish from './PostPublish';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+
 
 export default class Posts extends Component {
     constructor() {
@@ -8,6 +13,8 @@ export default class Posts extends Component {
         this.state = {
             posts: [],
             selectedPostToEdit: null,
+            selectedPostToView: null,
+            selectedPostToPublish: null,
             isLoading: true
         };
     }
@@ -21,7 +28,7 @@ export default class Posts extends Component {
                     ...item,
                     isToggled: true,
                     pageSlug: item.title.replace(/[\s_]/g, '-').toLowerCase(),
-                    bannerImage: "someImage",
+                    bannerImage: "https://source.unsplash.com/user/c_v_r/1900x800",
                     isPublished: true
                 }));
 
@@ -87,8 +94,70 @@ export default class Posts extends Component {
         });
     };
 
+    setSelectedPostToView = (post) => {
+        this.setState({
+            selectedPostToView: post,
+            selectedPostToEdit: null
+        });
+    };
+
+    setSelectedPostToPublish = (post) => {
+        this.setState({
+            selectedPostToPublish: post,
+            selectedPostToEdit: null
+        });
+    };
+
+    togglePublish = (post) => {
+        const updatedPosts = this.state.posts.map((p) => {
+            if (p.id === post.id) {
+                return { ...p, isPublished: !post.isPublished };
+            }
+            return p;
+        });
+
+        this.setState({
+            posts: updatedPosts,
+            selectedPostToPublish: null,
+        });
+    };
+
+    clearSelectedPost = () => {
+        this.setState({
+            selectedPostToView: null,
+            selectedPostToPublish: null,
+        });
+    };
+
     render() {
-        const { posts, selectedPostToEdit, isLoading } = this.state;
+        const { posts, selectedPostToEdit, isLoading, selectedPostToView, selectedPostToPublish } = this.state;
+
+        if (selectedPostToView) {
+            return (
+                <div>
+                    <button onClick={this.clearSelectedPost} className="mb-2 text-m font-semibold text-blue-500">
+                        <FontAwesomeIcon icon={faArrowLeft} className='mr-2' />
+                        Back to Post List
+                    </button>
+                    <PostDetails post={selectedPostToView} />
+                </div>
+            );
+        }
+
+        if (selectedPostToPublish) {
+            return (
+                <div>
+                    <button onClick={this.clearSelectedPost} className="mb-2 text-m font-semibold text-blue-500">
+                        <FontAwesomeIcon icon={faArrowLeft} className='mr-2' />
+                        Back to Post List
+                    </button>
+                    <PostPublish
+                        post={selectedPostToPublish}
+                        togglePublish={this.togglePublish}
+                    />
+                </div>
+            );
+        }
 
         return (
             <div>
@@ -112,6 +181,8 @@ export default class Posts extends Component {
                                 togglePosts={this.togglePost}
                                 editPost={this.setSelectedPostToEdit}
                                 deletePost={this.deletePost}
+                                viewPost={this.setSelectedPostToView}
+                                togglePublish={this.setSelectedPostToPublish}
                             />
                         </div>
                     </div>

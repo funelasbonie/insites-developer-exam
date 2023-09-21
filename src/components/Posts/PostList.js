@@ -1,6 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faTrash, faUpload, faDownload } from '@fortawesome/free-solid-svg-icons';
 
 export default class PostList extends React.Component {
 
@@ -39,7 +39,7 @@ export default class PostList extends React.Component {
     return (
       <div className="pt-2 pr-4 pl-1 bg-white">
         <div className='flex-wrap'>
-          <div class="flex-grow flex-nowrap">
+          <div className="flex-grow flex-nowrap">
             <div className="mb-4 flex justify-end items-center space-x-2">
               {currentPage > 1 && (
                 <button
@@ -81,11 +81,35 @@ export default class PostList extends React.Component {
           {currentPosts.map((post) => (
             <li key={post.id} className="mb-4">
               <div className="bg-white rounded-lg shadow-md p-4">
+                <span className={`px-2 py-1 text-sm font-semibold text-white ${post.isPublished ? "bg-blue-500" : "bg-gray-500"} rounded-lg`}>
+                  {post.isPublished ? "Published" : "Unpublished"}
+                </span>
                 <div className="flex justify-between items-center">
-                  <h3 className="mt-2 text-xl font-semibold text-gray-800 mr-5">{post.title}</h3>
-                  <span className={`px-2 py-1 text-sm font-semibold text-white ${post.isPublished ? "bg-blue-500" : "bg-gray-500"} rounded-lg`}>
-                    {post.isPublished ? "Published" : "Unpublished"}
-                  </span>
+                  <h3
+                    className={`mt-2 text-xl font-semibold mr-5 ${post.isPublished ? 'text-blue-500 cursor-pointer' : 'text-gray-800 '}`}
+                    onClick={() => post.isPublished ? this.props.viewPost(post) : {}}
+                  >{post.title}</h3>
+                  <div className="mt-3 w-16 flex flex-grow justify-end items-end gap-3">
+                    <button
+                      onClick={() => this.props.togglePublish(post)}
+                      className={`text-${post.isPublished ? 'gray' : 'blue'}-500 hover:text-${post.isPublished ? 'grey' : 'blue'}-700`}
+                    >
+                      <FontAwesomeIcon icon={post.isPublished ? faDownload : faUpload} />
+                    </button>
+                    <button
+                      onClick={() => this.props.editPost(post)}
+                      className="text-yellow-500 hover:text-yellow-700"
+                    >
+                      <FontAwesomeIcon icon={faEdit} />
+                    </button>
+                    <button
+                      onClick={() => this.props.deletePost(post)}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <FontAwesomeIcon icon={faTrash} />
+                    </button>
+
+                  </div>
                 </div>
                 <p className="mt-2 text-gray-600">
                   {post.isToggled
@@ -100,20 +124,6 @@ export default class PostList extends React.Component {
                     {post.isToggled ? 'Read More' : 'Show Less'}
                   </p>
                 )}
-                <div className="mt-3 w-16 flex items-end gap-3">
-                  <button
-                    onClick={() => this.props.editPost(post)}
-                    className="text-blue-500 hover:text-blue-700"
-                  >
-                    <FontAwesomeIcon icon={faEdit} />
-                  </button>
-                  <button
-                    onClick={() => this.props.deletePost(post)}
-                    className="text-red-500 hover:text-red-700"
-                  >
-                    <FontAwesomeIcon icon={faTrash} />
-                  </button>
-                </div>
               </div>
             </li>
           ))}

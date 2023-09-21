@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-class PostForm extends Component {
+export default class PostForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -47,7 +47,7 @@ class PostForm extends Component {
         id: Date.now(),
         title: this.state.title,
         body: this.state.body,
-        isToggled: true,
+        isToggled: false,
         pageSlug: this.state.title.replace(/[\s_]/g, '-').toLowerCase(),
         bannerImage: "someImage",
         isPublished: true
@@ -110,5 +110,3 @@ class PostForm extends Component {
     );
   }
 }
-
-export default PostForm;
