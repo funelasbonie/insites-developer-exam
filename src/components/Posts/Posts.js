@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import PostList from './PostList';
 import PostForm from './PostForm';
+import PostDetails from './PostDetails';
+import PostPublish from './PostPublish';
 
 export default class Posts extends Component {
     constructor() {
@@ -20,7 +23,12 @@ export default class Posts extends Component {
                 const modifiedData = data.map((item) => ({
                     ...item,
                     isToggled: true,
+                    pageSlug: item.title.replace(/[\s_]/g, '-').toLowerCase(),
+                    bannerImage: "https://source.unsplash.com/user/c_v_r/1900x800",
+                    isPublished: true
                 }));
+
+                console.log(modifiedData)
                 this.setState({
                     posts: modifiedData,
                     isLoading: false
@@ -82,37 +90,57 @@ export default class Posts extends Component {
         });
     };
 
+    togglePublish = (post) => {
+        const updatedPosts = this.state.posts.map((p) => {
+            if (p.id === post.id) {
+                return { ...p, isPublished: !post.isPublished };
+            }
+            return p;
+        });
+
+        this.setState({
+            posts: updatedPosts,
+        });
+    };
+
     render() {
         const { posts, selectedPostToEdit, isLoading } = this.state;
 
+        const HomeComponent = <div>
+            {isLoading ? (
+                <div className="flex justify-center items-center h-32">
+                    <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
+                </div>
+            ) : (
+                <div className="flex flex-col lg:flex-row">
+                    <div className="lg:w-1/3 md:w-full p-4">
+                        <PostForm
+                            addNewPost={this.addNewPost}
+                            selectedPostToEdit={selectedPostToEdit}
+                            editSelectedPost={this.editSelectedPost}
+                            cancelEdit={this.cancelEdit}
+                        />
+                    </div>
+                    <div className="lg:w-2/3 md:w-full p-4">
+                        <PostList
+                            posts={posts}
+                            togglePosts={this.togglePost}
+                            editPost={this.setSelectedPostToEdit}
+                            deletePost={this.deletePost}
+                        />
+                    </div>
+                </div>
+            )}
+        </div>
+
         return (
-            <div>
-                <div className="text-4xl font-bold mb-4 ml-4">POSTS</div>
-                {isLoading ? (
-                    <div className="flex justify-center items-center h-32">
-                        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
-                    </div>
-                ) : (
-                    <div className="flex">
-                        <div className="w-1/2 p-4">
-                            <PostForm
-                                addNewPost={this.addNewPost}
-                                selectedPostToEdit={selectedPostToEdit}
-                                editSelectedPost={this.editSelectedPost}
-                                cancelEdit={this.cancelEdit}
-                            />
-                        </div>
-                        <div className="w-1/2 p-4">
-                            <PostList
-                                posts={posts}
-                                togglePosts={this.togglePost}
-                                editPost={this.setSelectedPostToEdit}
-                                deletePost={this.deletePost}
-                            />
-                        </div>
-                    </div>
-                )}
-            </div>
+            <Router>
+                <Routes>
+                    <Route path="/" element={HomeComponent} />
+                    <Route path="/view/:slug" element={<PostDetails posts={posts} />} />
+                    <Route path="/publish/:slug" element={<PostPublish posts={posts} togglePublish={this.togglePublish} />} />
+                </Routes>
+            </Router>
         );
     }
 }
