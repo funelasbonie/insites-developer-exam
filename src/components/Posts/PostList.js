@@ -110,19 +110,27 @@ export default class PostList extends React.Component {
 
                   </div>
                 </div>
-                <p className="mt-2 text-gray-600">
-                  {post.isToggled
-                    ? post.body.slice(0, 100) + '...'
-                    : post.body}
-                </p>
-                {post.body.length > 100 && (
-                  <p
-                    onClick={() => this.props.togglePosts(post.id)}
-                    className="text-blue-500 hover:underline cursor-pointer mt-2"
-                  >
-                    {post.isToggled ? 'Read More' : 'Show Less'}
-                  </p>
-                )}
+                {
+                  post.isPublished
+                    ? (
+                      <div>
+                        <p className="mt-2 text-gray-600">
+                          {post.isToggled
+                            ? post.body.slice(0, 100) + '...'
+                            : post.body}
+                        </p>
+                        {post.body.length > 100 && (
+                          <p
+                            onClick={() => this.props.togglePosts(post.id)}
+                            className="text-blue-500 hover:underline cursor-pointer mt-2"
+                          >
+                            {post.isToggled ? 'Read More' : 'Show Less'}
+                          </p>
+                        )}
+                      </div>
+                    )
+                    : null
+                }
               </div>
             </li>
           ))}
