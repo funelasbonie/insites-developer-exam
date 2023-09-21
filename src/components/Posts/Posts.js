@@ -166,8 +166,8 @@ export default class Posts extends Component {
                         <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
                     </div>
                 ) : (
-                    <div className="flex">
-                        <div className="w-1/3 p-4">
+                    <div className="flex flex-col lg:flex-row">
+                        <div className="lg:w-1/3 md:w-full p-4">
                             <PostForm
                                 addNewPost={this.addNewPost}
                                 selectedPostToEdit={selectedPostToEdit}
@@ -175,7 +175,7 @@ export default class Posts extends Component {
                                 cancelEdit={this.cancelEdit}
                             />
                         </div>
-                        <div className="w-2/3 p-4">
+                        <div className="lg:w-2/3 md:w-full p-4">
                             <PostList
                                 posts={posts}
                                 togglePosts={this.togglePost}
